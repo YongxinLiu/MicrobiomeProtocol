@@ -1,16 +1,24 @@
-    # Èí¼ş¹ÜÀíÆ÷miniconda2
+## è½¯ä»¶å®‰è£…å’Œæ•°æ®åº“éƒ¨ç½²
+	
+	# è½¯ä»¶ç®¡ç†å™¨miniconda2
+	# ä¸‹è½½å’Œå®‰è£…
     wget -c https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
     bash Miniconda2-latest-Linux-x86_64.sh
+	# æŸ¥çœ‹å¹¶è®°å½•æ ¸å¿ƒè½¯ä»¶ç‰ˆæœ¬
     conda -V # 4.8.3
     python --version # 2.7.15
-    # Ìí¼ÓÉúÎïÆµµÀ£¬²ÅÄÜÕÒµ½ÉúÎïÑ§Èí¼ş
+
+	# é…ç½®condaç¯å¢ƒ
+    # æ·»åŠ ç”Ÿç‰©é¢‘é“ï¼Œæ‰èƒ½æ‰¾åˆ°ç”Ÿç‰©å­¦è½¯ä»¶
     conda config --add channels bioconda
     conda config --add channels conda-forge
 
-    # ¿ÉÑ¡´´½¨ĞéÄâ»·¾³£¬·ÀÖ¹ÎÛÈ¾»·¾³±äÁ¿
+    # åˆ›å»ºè™šæ‹Ÿç¯å¢ƒï¼Œé˜²æ­¢æ±¡æŸ“ç¯å¢ƒå˜é‡
     conda create -n qc2 python=2.7
+	# å¯åŠ¨è™šæ‹Ÿç¯å¢ƒ
+	conda activate qc2
 
-	# °²×°Èí¼şºÍ²é¿´°æ±¾
+	# å®‰è£…è½¯ä»¶å’ŒæŸ¥çœ‹ç‰ˆæœ¬
     conda install fastqc -y
     fastqc -v # FastQC v0.11.9
     conda install multiqc -y
@@ -20,92 +28,106 @@
 	conda install parallel -y
     parallel --version # 20200522
 
-
-    mkdir -p db
-	# ²é¿´¿ÉÓÃµÄË÷Òı£¬ÓĞÈËÀà¡¢Ğ¡Êó»ùÒò×é¡¢ÈËÀà×ªÂ¼×éºÍºËÌÇÌåÊı¾İ¿â
+	# æŸ¥çœ‹å¯ç”¨çš„ç´¢å¼•ï¼Œæœ‰äººç±»ã€å°é¼ åŸºå› ç»„ã€äººç±»è½¬å½•ç»„å’Œæ ¸ç³–ä½“æ•°æ®åº“
 	kneaddata_database
-	# ÏÂÔØË÷ÒıµÄÈËÀà»ùÒò×ébowite 2Ë÷Òı
-    kneaddata_database --download human_genome bowtie2 db
+	# ä¸‹è½½ç´¢å¼•çš„äººç±»åŸºå› ç»„Bowtie 2ç´¢å¼•ï¼Œå¤šæ–‡ä»¶æ¨èå»ºç«‹å¹¶æŒ‡å®šæ–‡ä»¶å¤¹
+    mkdir -p db
+    kneaddata_database --download human_genome bowtie2 db/
 
-# ÊµÑé²½Öè
-
-## 1.	×¼±¸ÊäÈëÊı¾İ
-
-	# ¶àÎÄ¼şÖĞĞÂ½¨ÎÄ¼ş¼Ğ±£´æ£¬-pÔÊĞí½¨Á¢¶à¼¶Ä¿Â¼¡¢¶à¸öÄ¿Â¼ÇÒÄ¿Â¼ÒÑ´æÔÚÒ²²»±¨´í
+	# å‡†å¤‡è¾“å…¥æ•°æ®
+	# (å¯é€‰) ä¸‹è½½å…¬å…±æ•°æ®
+	# å¤šæ–‡ä»¶ä¸­æ–°å»ºæ–‡ä»¶å¤¹ä¿å­˜ï¼Œ-på…è®¸å»ºç«‹å¤šçº§ç›®å½•ã€å¤šä¸ªç›®å½•ä¸”ç›®å½•å·²å­˜åœ¨ä¹Ÿä¸æŠ¥é”™
 	mkdir -p seq
-	# wgetÏÂÔØµ¥¸öÑù±¾£¬-cÎªÖ§³Ö¶ÏµãĞø´«£¬-OÖ¸¶¨±£´æÎ»ÖÃ²¢¿ÉÖØÃüÃû£¬Ã¿¸öË«¶ËÑù±¾ÏÂÔØÁ½¸öÎÄ¼ş
-	wget -c ftp://download.big.ac.cn/gsa/CRA002355/CRR117732/CRR117732_f1.fq.gz -O seq/C2_1.fq.gz
-	wget -c ftp://download.big.ac.cn/gsa/CRA002355/CRR117732/CRR117732_r2.fq.gz -O seq/C2_2.fq.gz
-	# ½áºÏforÑ­»·ÔÙÏÂÔØ3¸öÑù±¾£¬seqÃüÁî²úÉúÁ¬ĞøĞòÁĞ£¬$iÌæ»»ÃüÁîÖĞ¿É±ä²¿·Ö£¬½áÎ²¼Ó\±£Ö¤±äÁ¿ÃûÕıÈ·Ê¶±ğ
+	# wgetä¸‹è½½å•ä¸ªæ ·æœ¬ï¼Œ-cä¸ºæ”¯æŒæ–­ç‚¹ç»­ä¼ ï¼Œ-OæŒ‡å®šä¿å­˜ä½ç½®å¹¶å¯é‡å‘½åï¼Œæ¯ä¸ªåŒç«¯æ ·æœ¬ä¸‹è½½ä¸¤ä¸ªæ–‡ä»¶
+	wget -c ftp://download.big.ac.cn/gsa/CRA002355/CRR117732/CRR117732_f1.fq.gz \
+	  -O seq/C2_1.fq.gz
+	wget -c ftp://download.big.ac.cn/gsa/CRA002355/CRR117732/CRR117732_r2.fq.gz \
+	  -O seq/C2_2.fq.gz
+	# ç»“åˆforå¾ªç¯å†ä¸‹è½½3ä¸ªæ ·æœ¬ï¼Œseqå‘½ä»¤äº§ç”Ÿè¿ç»­åºåˆ—ï¼Œ$iæ›¿æ¢å‘½ä»¤ä¸­å¯å˜éƒ¨åˆ†ï¼Œç»“å°¾åŠ \ä¿è¯å˜é‡åæ­£ç¡®è¯†åˆ«
 	for i in `seq 3 5`;do
-	wget -c ftp://download.big.ac.cn/gsa/CRA002355/CRR11773$i/CRR11773$i\_f1.fq.gz -O seq/C$i\_1.fq.gz
-	wget -c ftp://download.big.ac.cn/gsa/CRA002355/CRR11773$i/CRR11773$i\_r2.fq.gz -O seq/C$i\_2.fq.gz
+	  wget -c ftp://download.big.ac.cn/gsa/CRA002355/CRR11773$i/CRR11773$i\_f1.fq.gz \
+		-O seq/C$i\_1.fq.gz
+	  wget -c ftp://download.big.ac.cn/gsa/CRA002355/CRR11773$i/CRR11773$i\_r2.fq.gz \
+		-O seq/C$i\_2.fq.gz
 	done
 
-## 2.	FastQC²âĞòÊı¾İÖÊÁ¿ÆÀ¹À
+# å®éªŒæ­¥éª¤
 
-	# ÓÃ*.fq.gz´ú±íËùÒÔÓĞ.fq.gz½áÎ²µÄÎÄ¼ş£¬¼´µ±Ç°ËùÓĞ²âĞòÊı¾İ£»-t 3Ö¸¶¨×î¶àÍ¬Ê±Ê¹ÓÃ3¸öÏß³Ì
+	# åŠ è½½è½¯ä»¶ç¯å¢ƒ
+	conda activate qc2
+
+## 1.	FastQCæµ‹åºæ•°æ®è´¨é‡è¯„ä¼°
+
+	# ç”¨*.fq.gzä»£è¡¨æ‰€ä»¥æœ‰.fq.gzç»“å°¾çš„æ–‡ä»¶ï¼Œå³å½“å‰æ‰€æœ‰æµ‹åºæ•°æ®ï¼›-t 3æŒ‡å®šæœ€å¤šåŒæ—¶ä½¿ç”¨3ä¸ªçº¿ç¨‹
 	fastqc seq/*.fq.gz -t 3
 
-## 3.	MultiQC»ã×ÜÖÊÁ¿ÆÀ¹À±¨¸æ
+## 2.	MultiQCæ±‡æ€»è´¨é‡è¯„ä¼°æŠ¥å‘Š
 
-	# -dÖ¸¶¨ÊäÈëÄ¿Â¼£¬-oÖ¸¶¨Êä³öÄ¿Â¼
+	# -dæŒ‡å®šè¾“å…¥ç›®å½•ï¼Œ-oæŒ‡å®šè¾“å‡ºç›®å½•
     multiqc -d seq/ -o ./
 
-## 4.	¼ì²é²âĞòË«¶ËĞòÁĞ±êÇ©ÊÇ·ñÎ¨Ò»
+	# (å¯é€‰)ç¡®å®šæ¥å¤´æ–‡ä»¶
+	# ç¡®å®štrimmomaticè½¯ä»¶ä½ç½®
+	type trimmomatic
+	# æ ¹æ®ä¸Šé¢ç¯å¢ƒè·¯å¾„+share/trimmomatic/adaptersç›®å½•åŒ¹é…æ¥å¤´åºåˆ—çš„æ–‡ä»¶
+	grep 'ATCGGAAGAGCACACGTCTGAAC' ~/.conda/envs/qc2/share/trimmomatic/adapters/*
 
-	# ²é¿´Ñù±¾ÊÇ·ñ±êÇ©ÓĞÖØ¸´
+## 3. (å¯é€‰)æ£€æŸ¥æµ‹åºåŒç«¯åºåˆ—æ ‡ç­¾æ˜¯å¦å”¯ä¸€
+
+	# æŸ¥çœ‹æ ·æœ¬æ˜¯å¦æ ‡ç­¾æœ‰é‡å¤
 	zcat seq/C2_1.fq.gz|head
 	zcat seq/C2_2.fq.gz|head
 
-	# ½âÑ¹¡¢¶ÔĞòÁĞµÄ×ó¡¢ÓÒ¶Ë±êÌâĞĞ·Ö±ğÌí\1¡¢\2
+	# è§£å‹ã€å¯¹åºåˆ—çš„å·¦ã€å³ç«¯æ ‡é¢˜è¡Œåˆ†åˆ«æ·»\1ã€\2
 	gunzip seq/*.gz
     sed -i '1~4 s/$/\\1/g' seq/*_1.fq
     sed -i '1~4 s/$/\\2/g' seq/*_2.fq
-	# ºË¶ÔÑù±¾ÊÇ·ñ±êÇ©ÓĞÖØ¸´
+	# æ ¸å¯¹æ ·æœ¬æ˜¯å¦æ ‡ç­¾æœ‰é‡å¤
 	head seq/C2_1.fq
 	head seq/C2_2.fq
-	# Ñ¹Ëõ½ÚÊ¡¿Õ¼ä
+	# å‹ç¼©èŠ‚çœç©ºé—´
     gzip seq/*.fq
 
-## 4.	KneadDataÖÊÁ¿¿ØÖÆºÍÈ¥ËŞÖ÷
+## 4. KneadDataè´¨é‡æ§åˆ¶å’Œå»å®¿ä¸»
 
-    kneaddata -h # ÏÔÊ¾°ïÖú
-	# µ¥Î»¸öÑù±¾ÖÊ¿ØºÍÈ¥ËŞÖ÷
+    kneaddata -h # æ˜¾ç¤ºå¸®åŠ©
+	# å•ä½ä¸ªæ ·æœ¬è´¨æ§å’Œå»å®¿ä¸»
     kneaddata -i seq/C2_1.fq.gz -i seq/C2_2.fq.gz \
       -o qc/ -v -t 8 --remove-intermediate-output \
       --trimmomatic ~/.conda/envs/qc2/share/trimmomatic \
       --trimmomatic-options 'ILLUMINACLIP:~/.conda/envs/qc2/share/trimmomatic/adapters/TruSeq3-PE.fa:2:40:15 SLIDINGWINDOW:4:20 MINLEN:50' \
-      --bowtie2-options '--very-sensitive --dovetail' -db db/hg37dec_v0.1
+      --bowtie2-options '--very-sensitive --dovetail' -db db/Homo_sapiens
 
-	# parallel¹ÜÀí¶ÓÁĞ£¬ÔÊĞí2¸öÈÎÎñÍ¬Ê±½øĞĞ
+	# parallelç®¡ç†é˜Ÿåˆ—ï¼Œå…è®¸2ä¸ªä»»åŠ¡åŒæ—¶è¿›è¡Œ
     parallel -j 2 --xapply \
       "kneaddata -i seq/C{1}_1.fq.gz \
       -i seq/C{1}_2.fq.gz \
       -o qc/ -v -t 8 --remove-intermediate-output \
       --trimmomatic ~/.conda/envs/qc2/share/trimmomatic \
       --trimmomatic-options 'ILLUMINACLIP:~/.conda/envs/qc2/share/trimmomatic/adapters/TruSeq3-PE.fa:2:40:15 SLIDINGWINDOW:4:20 MINLEN:50' \
-      --bowtie2-options '--very-sensitive --dovetail' -db db/hg37dec_v0.1" \
+      --bowtie2-options '--very-sensitive --dovetail' -db db/Homo_sapiens" \
       ::: `seq 3 5`
 
-	# Ñù±¾ÖÊ¿Ø»ã×Ü±í
-    kneaddata_read_count_table \
-      --input qc \
-      --output kneaddata_sum.txt
-	# ÌáÈ¡raw¡¢trimºÍfinal¹Ø¼ü½á¹û
-	cut -f 1-5,12-13 kneaddata_sum.txt | sed 's/_1_kneaddata//;s/pair//g' > kneaddata_report.txt
+	# æ ·æœ¬è´¨æ§æ±‡æ€»è¡¨
+	kneaddata_read_count_table \
+	  --input qc \
+	  --output kneaddata_sum.txt
+	# æå–rawã€trimå’Œfinalå…³é”®ç»“æœ
+	cut -f 1-5,12-13 kneaddata_sum.txt | sed 's/_1_kneaddata//;s/pair//g' \
+	  > kneaddata_report.txt
+	cat kneaddata_report.txt
 
-## 5.	(¿ÉÑ¡)ÖÊ¿ØºóÖÊÁ¿ÔÙÆÀ¹À 
+## 5.	(å¯é€‰)è´¨æ§åè´¨é‡å†è¯„ä¼° 
 
     fastqc qc/*_1_kneaddata_paired_*.fastq -t 2
     multiqc -d qc/ -o ./
 
 
-# ³£¼ûÎÊÌâ
+# å¸¸è§é—®é¢˜
 
-## 1. Èí¼şÏÂÔØÂı»òÎŞ·¨ÏÂÔØ
+## 1. è½¯ä»¶ä¸‹è½½æ…¢æˆ–æ— æ³•ä¸‹è½½
 
-	# Ìí¼ÓÇå»ªconda¾µÏñ
+	# æ·»åŠ æ¸…åcondaé•œåƒ
 	site=https://mirrors.tuna.tsinghua.edu.cn/anaconda
 	conda config --add channels $site/pkgs/free/ 
 	conda config --add channels $site/pkgs/main/
@@ -113,5 +135,37 @@
 	conda config --add channels $site/pkgs/r/
 	conda config --add channels $site/cloud/bioconda/
 
-## 2. Êı¾İ¿âÏÂÔØÂı»òÎŞ·¨ÏÂÔØ
+## 2. æ•°æ®åº“ä¸‹è½½æ…¢æˆ–æ— æ³•ä¸‹è½½
 
+	# å¾ˆå¤šå›½å¤–å‘å¸ƒæ•°æ®åº“ä¸‹è½½ç¼“æ…¢ï¼Œç”šè‡³æ‰˜ç®¡äºGoogleæˆ–Dropboxç­‰å›½å†…æ— æ³•è®¿é—®çš„ç«™ç‚¹ã€‚å®åŸºå› ç»„å…¬ä¼—å·å›¢é˜Ÿå»ºç«‹æœ¬é¢†åŸŸå¸¸ç”¨æ•°æ®åº“ä¸‹è½½çš„å›½å†…å¤‡ä»½é“¾æ¥å’Œç™¾åº¦äº‘é“¾æ¥ï¼Œæ–¹ä¾¿å›½å†…åŒè¡Œä¸‹è½½ï¼Œè¯¦è§ï¼š
+	https://github.com/YongxinLiu/MicrobiomeStatPlot/blob/master/Data/BigDataDownlaodList.md
+
+## 3. éé»˜è®¤ç‰©ç§å‚è€ƒåŸºå› ç»„ä¸‹è½½å’Œå»ºç´¢å¼•ï¼Œä»¥æ‹Ÿå—èŠ¥ä¸ºä¾‹
+
+	wget -c ftp://ftp.ensemblgenomes.org/pub/plants/release-47/fasta/arabidopsis_thaliana/dna/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa.gz \
+		-O ath.fa.gz
+	bowtie2-build ath.fa.gz ath.bt2
+
+
+## 4. æ ¹æ®è´¨é‡è¯„ä¼°æŠ¥å‘Šç¡®å®šæ¥å¤´åºåˆ—
+	# ç¡®å®štrimmomaticè½¯ä»¶ä½ç½®
+	type trimmomatic
+	# æ ¹æ®ä¸Šé¢ç¯å¢ƒè·¯å¾„+share/trimmomatic/adaptersç›®å½•åŒ¹é…æ¥å¤´åºåˆ—çš„æ–‡ä»¶
+	grep 'ATCGGAAGAGCACACGTCTGAAC' ~/.conda/envs/qc2/share/trimmomatic/adapters/*
+
+
+## 5. æ£€æŸ¥æµ‹åºåŒç«¯åºåˆ—æ ‡ç­¾æ˜¯å¦å”¯ä¸€
+
+	# æŸ¥çœ‹æ ·æœ¬æ˜¯å¦æ ‡ç­¾æœ‰é‡å¤
+	zcat seq/C2_1.fq.gz|head
+	zcat seq/C2_2.fq.gz|head
+
+	# è§£å‹ã€å¯¹åºåˆ—çš„å·¦ã€å³ç«¯æ ‡é¢˜è¡Œåˆ†åˆ«æ·»\1ã€\2
+	gunzip seq/*.gz
+    sed -i '1~4 s/$/\\1/g' seq/*_1.fq
+    sed -i '1~4 s/$/\\2/g' seq/*_2.fq
+	# æ ¸å¯¹æ ·æœ¬æ˜¯å¦æ ‡ç­¾æœ‰é‡å¤
+	head seq/C2_1.fq
+	head seq/C2_2.fq
+	# å‹ç¼©èŠ‚çœç©ºé—´
+    gzip seq/*.fq

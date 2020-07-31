@@ -1,0 +1,5 @@
+Sample	raw pair1	raw pair2	trimmed pair1	trimmed pair2	trimmed orphan1	trimmed orphan2	decontaminated hg37dec_v0.1 pair1	decontaminated hg37dec_v0.1 pair2	decontaminated hg37dec_v0.1 orphan1	decontaminated hg37dec_v0.1 orphan2	final pair1	final pair2	final orphan1	final orphan2
+C2_1_kneaddata	75000	75000	65316	65316	5061	1635	64876	64876	5031	1635	64876	64876	5031	1635
+C3_1_kneaddata	75000	75000	48082	48082	2116	8597	30897	30897	2081	6966	30897	30897	2081	6966
+C4_1_kneaddata	75000	75000	50387	50387	6974	1832	29343	29343	5121	1775	29343	29343	5121	1775
+C5_1_kneaddata	75000	75000	60959	60959	6028	1850	57379	57379	5640	1851	57379	57379	5640	1851
