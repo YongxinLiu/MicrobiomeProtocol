@@ -8,8 +8,8 @@
 
 ## 1. 准备工作
 
-	# 设置工作目录，如服务器为~/amplicon/25QIIME2，Win子系统为
-	wd=/mnt/c/amplicon/25QIIME2/
+	# 设置工作目录，如服务器为~/qiime2，Win子系统C盘中为
+	wd=/mnt/c/qiime2/
 	# 进入工作目录
 	mkdir -p ${wd}
 	cd ${wd}
@@ -17,33 +17,20 @@
 	conda activate qiime2-2020.6
 
 	# 准备样本元信息metadata、原始数据seq/*.fastq和manifest
-	## 上传metadata.txt和测序数据，FileZilla或RStudio
-	## 此处演示从公共数据下载测序数据，按GSA的CRA(批次)和CRR(样品)编号下载数据
+	# 下载示例元数据供参考
+	wget -c http://210.75.224.110/github/MicrobiomeProtocol/e2.QIIME2/metadata.txt
+	# 下载测试数据供测试流程，按GSA的CRA(批次)和CRR(样品)编号下载数据
     mkdir -p seq
-    cd seq
-  	awk '{system("wget -c ftp://download.big.ac.cn/gsa/"$5"/"$6"/"$6"_f1.fq.gz -O "$1"_1.fq.gz")}' \
-        <(tail -n+2 ../metadata.txt)
-   	awk '{system("wget -c ftp://download.big.ac.cn/gsa/"$5"/"$6"/"$6"_r2.fq.gz -O "$1"_2.fq.gz")}' \
-        <(tail -n+2 ../metadata.txt)
-    cd .. && ls -lsh seq
-    # 从其他地方链接
-    ln /mnt/c/amplicon/seq/* seq/
+  	awk '{system("wget -c ftp://download.big.ac.cn/gsa/"$5"/"$6"/"$6"_f1.fq.gz -O seq/"$1"_1.fq.gz")}' \
+        <(tail -n+2 metadata.txt)
+   	awk '{system("wget -c ftp://download.big.ac.cn/gsa/"$5"/"$6"/"$6"_r2.fq.gz -O seq/"$1"_2.fq.gz")}' \
+        <(tail -n+2 metadata.txt)
+	# 检查文件大小，确定是否下载完整或正常
+	ls -lsh seq
 	# 根据metadata生成manifest文件
 	awk 'NR==1{print "sample-id\tforward-absolute-filepath\treverse-absolute-filepath"} \
 	  NR>1{print $1"\t$PWD/seq/"$1"_1.fq.gz\t$PWD/seq/"$1"_2.fq.gz"}' \
 	  metadata.txt > manifest
-
-	# 查看目录中起始文件
-	tree
-	# ├── manifest # 输入文件绝对位置(导入数据时仅用一次)
-	# ├── pipeline_qiime2.sh # 分析流程
-	# ├── metadata.txt # 样本元数据/实验设计
-	# └── seq # 数据
-	#     ├── KO1_1.fq.gz
-	#     ├── KO1_2.fq.gz
-	#     ├── ……
-	#     └── WT6_2.fq.gz
-
 
 	# 数据导入qiime2，格式为双端33格式
 	qiime tools import \
@@ -58,10 +45,11 @@
 
 ### 方法1. DADA2 (慢，依赖R和Python包多容易报错)
 
-	# 支持多线程加速，0/96p, 34m；24p, 44m；8p, 77m；1p, 462m
+	# 支持多线程加速，服务器0/96p, 34m；24p, 44m；8p, 77m；1p, 462m
+	# Win10下12线程65m，机时538分
 	time qiime dada2 denoise-paired \
 	  --i-demultiplexed-seqs demux.qza \
-	  --p-n-threads 8 \
+	  --p-n-threads 12 \
 	  --p-trim-left-f 29 --p-trim-left-r 18 \
 	  --p-trunc-len-f 0 --p-trunc-len-r 0 \
 	  --o-table dada2-table.qza \
@@ -71,20 +59,7 @@
 	cp dada2-table.qza table.qza
 	cp dada2-rep-seqs.qza rep-seqs.qza
 
-### 方法2. 外部导入特征表和代表序列(常用)
-
-	# 上传我们生成的OTU表otutab.txt和代表序列otus.fa
-	# 转换文本为Biom1.0，注意biom --version 2.1.5/8可以，2.1.7报错
-	biom convert -i otutab.txt -o otutab.biom \
-	  --table-type="OTU table" --to-json
-	# 导入特征表，9s
-	qiime tools import --input-path otutab.biom \
-	  --type 'FeatureTable[Frequency]' --input-format BIOMV100Format \
-	  --output-path table.qza
-	# 导入代表序列，8s
-	qiime tools import --input-path otus.fa \
-	  --type 'FeatureData[Sequence]' \
-	  --output-path rep-seqs.qza
+### 方法2. 外部导入特征表和代表序列(常用)，详见附录
 
 
 ### 特征表和代表序列统计
@@ -141,7 +116,7 @@
 	# 7s, 指定分组是减少计算量，置换检验较耗时
 	distance=weighted_unifrac
 	column=Group
-	time qiime diversity beta-group-significance \
+	qiime diversity beta-group-significance \
 	  --i-distance-matrix core-metrics-results/${distance}_distance_matrix.qza \
 	  --m-metadata-file metadata.txt \
 	  --m-metadata-column ${column} \
@@ -211,8 +186,8 @@
 
 
 	# Conda下载、安装
-	wget -c https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
-	bash Miniconda2-latest-Linux-x86_64.sh -b -f
+	wget -c https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+	bash Miniconda3-latest-Linux-x86_64.sh -b -f
 	# 添加至默认环境
 	~/miniconda2/bin/conda init
 	# 下载软件安装清单，有410个软件，通过4个conda频道安装，但在google服务器下载困难
@@ -264,14 +239,55 @@
 	  --o-reads ref-seqs.qza
 
 	# Train the classifier（训练分类器）
-	# 基于筛选的指定区段，生成实验特异的分类器，27m
+	# 基于筛选的指定区段，生成实验特异的分类器，8m
 	time qiime feature-classifier fit-classifier-naive-bayes \
 	  --i-reference-reads ref-seqs.qza \
 	  --i-reference-taxonomy ref-taxonomy.qza \
 	  --o-classifier classifier_gg_13_8_99_V5-V7.qza
 
-	# 常见问题：scikit-learn版本不兼容，重新构建训练集即可
+### 常见问题3：scikit-learn版本不兼容，重新构建训练集即可
+
 	Plugin error from feature-classifier:
 	  The scikit-learn version (0.21.2) used to generate this artifact does not match the current version of scikit-learn installed (0.22.1). Please retrain your classifier for your current deployment to prevent data-corruption errors.
 	Debug info has been saved to /tmp/qiime2-q2cli-err-5ngzk2hm.log
 
+### 常见问题4. 外部导入特征表和代表序列(常用)
+
+	# 上传其他流程生成的OTU表otutab.txt和代表序列otus.fa
+	wget -c http://210.75.224.110/github/MicrobiomeProtocol/e2.QIIME2/otutab.txt
+	wget -c http://210.75.224.110/github/MicrobiomeProtocol/e2.QIIME2/otus.fa
+	# 转换文本为Biom1.0，注意biom --version 2.1.5/8可以，2.1.7报错
+	biom convert -i otutab.txt -o otutab.biom \
+	  --table-type="OTU table" --to-json
+	# 导入特征表，9s
+	qiime tools import --input-path otutab.biom \
+	  --type 'FeatureTable[Frequency]' --input-format BIOMV100Format \
+	  --output-path table.qza
+	# 导入代表序列，8s
+	qiime tools import --input-path otus.fa \
+	  --type 'FeatureData[Sequence]' \
+	  --output-path rep-seqs.qza
+
+### 常见问题5. 导出特征表和代表序列
+
+    # 导出特征表为biom格式
+    qiime tools export \
+      --input-path table.qza \
+      --output-path feature-table
+    # 转换为tsv格式
+    biom convert -i feature-table/feature-table.biom \
+      -o feature-table/feature-table.txt \
+      --to-tsv
+    # 删除注释行
+    sed -i '/# Const/d' feature-table/feature-table.txt
+    
+    # 导出代表序列
+    qiime tools export \
+      --input-path rep-seqs.qza \
+      --output-path rep-seqs
+    
+    # 导出物种注释
+    qiime tools export \
+      --input-path taxonomy.qza \
+      --output-path taxonomy
+    
