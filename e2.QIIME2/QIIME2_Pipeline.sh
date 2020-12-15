@@ -1,9 +1,9 @@
-# QIIME2 2020.6分析流程
+# QIIME2 2020.11分析流程
 
 ## 0. 软件安装
 	# 仅限在Linux/Mac系统中运行，
 	# Windows用户使用服务器、内置子系列(支持右键粘贴)或VirtualBox虚拟机中的Linux运行
-	# 详细教程参阅官网https://docs.qiime2.org/2020.6/，或QIIME2教程专辑 https://mp.weixin.qq.com/s/vlc2uIaWnPSMhPBeQtPR4w
+	# 详细教程参阅官网https://docs.qiime2.org/2020.11/，或QIIME2教程专辑 https://mp.weixin.qq.com/s/vlc2uIaWnPSMhPBeQtPR4w
 
 
 ## 1. 准备工作
@@ -14,7 +14,7 @@
 	mkdir -p ${wd}
 	cd ${wd}
 	# 激活QIIME2工作环境，旧版conda使用source替换conda运行
-	conda activate qiime2-2020.6
+	conda activate qiime2-2020.11
 
 	# 准备样本元信息metadata、原始数据seq/*.fastq和manifest
 	# 下载示例元数据供参考
@@ -89,7 +89,7 @@
 	qiime diversity core-metrics-phylogenetic \
 	  --i-phylogeny rooted-tree.qza \
 	  --i-table table.qza \
-	  --p-sampling-depth 27060 \
+	  --p-sampling-depth 7000 \
 	  --m-metadata-file metadata.txt \
 	  --output-dir core-metrics-results
 
@@ -106,7 +106,7 @@
 	qiime diversity alpha-rarefaction \
 	  --i-table table.qza \
 	  --i-phylogeny rooted-tree.qza \
-	  --p-max-depth 34663 \
+	  --p-max-depth 10000 \
 	  --m-metadata-file metadata.txt \
 	  --o-visualization alpha-rarefaction.qzv
 	# 结果有observed_otus, shannon, 和faith_pd三种指数可选
@@ -182,7 +182,7 @@
 
 # 附录
 
-## 1. qiime2 2020.6安装
+## 1. qiime2 2020.11安装
 
 
 	# Conda下载、安装
@@ -191,14 +191,14 @@
 	# 添加至默认环境
 	~/miniconda2/bin/conda init
 	# 下载软件安装清单，有410个软件，通过4个conda频道安装，但在google服务器下载困难
-	# wget -c https://data.qiime2.org/distro/core/qiime2-2020.6-py36-linux-conda.yml
+	# wget -c https://data.qiime2.org/distro/core/qiime2-2020.11-py36-linux-conda.yml
 	# 下载失败时，可在 https://github.com/YongxinLiu/QIIME2ChineseManual 下载或使用备用链接
-	wget -c http://210.75.224.110/github/QIIME2ChineseManual/2020.6/qiime2-2020.6-py36-linux-conda.yml
+	wget -c http://210.75.224.110/github/QIIME2ChineseManual/2020.11/qiime2-2020.11-py36-linux-conda.yml
 	# conda安装QIIME 2(仅运行1次)，我用时33m，供参考，主要由网速决定
-	conda env create -n qiime2-2020.6 --file qiime2-2020.6-py36-linux-conda.yml
+	conda env create -n qiime2-2020.11 --file qiime2-2020.11-py36-linux-conda.yml
 
 	# 进入工作环境
-	conda activate qiime2-2020.6
+	conda activate qiime2-2020.11
 
 
 ## 2. 物种注释数据训练集
@@ -223,7 +223,7 @@
 	  --input-path gg_13_8_otus/taxonomy/99_otu_taxonomy.txt \
 	  --output-path ref-taxonomy.qza
 
-	# Train the classifier（训练分类器）——全长
+	# Train the classifier（训练分类器）——全长，30m
 	time qiime feature-classifier fit-classifier-naive-bayes \
 	  --i-reference-reads 99_otus.qza \
 	  --i-reference-taxonomy ref-taxonomy.qza \
@@ -239,7 +239,7 @@
 	  --o-reads ref-seqs.qza
 
 	# Train the classifier（训练分类器）
-	# 基于筛选的指定区段，生成实验特异的分类器，8m
+	# 基于筛选的指定区段，生成实验特异的分类器，14m
 	time qiime feature-classifier fit-classifier-naive-bayes \
 	  --i-reference-reads ref-seqs.qza \
 	  --i-reference-taxonomy ref-taxonomy.qza \
